@@ -9,6 +9,11 @@
       "email": "cmac2712@gmail.com",
       "password": "$2a$10$3.YTS1PMi9aK/cmvVBBZ0eO.wmQKChxJ3bNv.dnDPvyy2fNNavQke",
       "id": 2
+    },
+    {
+      "email": "random@mail.com",
+      "password": "$2a$10$wBRLLSR6xw74YwLNbxB5DeDOlpLiKoUggtEm.JMgN.kUoazI95ISi",
+      "id": 3
     }
   ]
 }

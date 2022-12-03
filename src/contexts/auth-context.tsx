@@ -1,10 +1,4 @@
-import {
-  useContext,
-  useState,
-  createContext,
-  ReactNode,
-  useCallback,
-} from "react";
+import { useContext, useState, createContext, ReactNode } from "react";
 
 interface User {
   id: string | null;
@@ -12,9 +6,9 @@ interface User {
 
 export type AuthProps = {
   user: User | null;
-  logIn: (email: string, password: string) => User;
-  logOut: () => User;
-  register: () => Promise<User>;
+  logIn: (email: string, password: string) => Promise<User>;
+  logOut: () => void;
+  register: (email: string, password: string) => Promise<User>;
   isLoading: boolean;
   isError: boolean;
 } | null;
@@ -39,16 +33,20 @@ async function authQuery(endpoint: string, data: object) {
     body: JSON.stringify(data),
   };
 
-  return fetch(`${import.meta.env.VITE_API_ENDPOINT}/${endpoint}`, config).then(
-    async (resp) =>
-      resp.ok ? await resp.json() : Promise.reject(await resp.json())
-  );
+  return fetch(`${import.meta.env.VITE_API_ENDPOINT}/${endpoint}`, config)
+    .then(async (resp) => {
+      return resp.ok ? await resp.json() : Promise.reject(resp);
+    })
+    .catch((err) => {
+      console.log(err);
+      return "error";
+    });
 }
 
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const isError = false;
+  const [isError, setIsError] = useState(false);
 
   const logIn = async (email: string, password: string) => {
     setIsLoading(true);

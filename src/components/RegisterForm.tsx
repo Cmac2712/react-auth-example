@@ -1,24 +1,23 @@
-import React, { useState, MouseEvent } from "react";
 import { useAuth } from "../contexts/auth-context";
 
-interface LoginFormData {
+interface RegisterFormData {
   elements: {
     email: { value: string };
     password: { value: string };
   };
 }
 
-function LoginForm() {
-  const { logIn } = useAuth();
+function RegisterForm() {
+  const { register } = useAuth();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { email, password } = (
-      event.target as HTMLFormElement & LoginFormData
+      event.target as HTMLFormElement & RegisterFormData
     ).elements;
 
-    logIn(email.value, password.value);
+    register(email.value, password.value);
   };
 
   return (
@@ -29,9 +28,9 @@ function LoginForm() {
       <label htmlFor="password">Password</label>
       <input type="password" id="password" />
       <br />
-      <button type="submit">Log In</button>
+      <button type="submit">Register</button>
     </form>
   );
 }
 
-export { LoginForm };
+export { RegisterForm };

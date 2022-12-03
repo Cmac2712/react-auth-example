@@ -47,7 +47,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
       }),
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Failed to log in");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     if (user) return user;
 

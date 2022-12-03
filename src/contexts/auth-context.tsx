@@ -12,8 +12,8 @@ interface User {
 
 export type AuthProps = {
   user: User | null;
-  logIn: (email: string, password: string) => Promise<Response> | User;
-  logOut: () => Promise<null>;
+  logIn: (email: string, password: string) => User;
+  logOut: () => User;
   register: () => Promise<User>;
   isLoading: boolean;
   isError: boolean;
@@ -32,65 +32,43 @@ function useAuth() {
   return context;
 }
 
+async function authQuery(endpoint: string, data: object) {
+  const config = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  };
+
+  return fetch(`${import.meta.env.VITE_API_ENDPOINT}/${endpoint}`, config).then(
+    async (resp) =>
+      resp.ok ? await resp.json() : Promise.reject(await resp.json())
+  );
+}
+
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const isError = false;
 
-  const logIn = useCallback((email: string, password: string) => {
-    const user = fetch(`${import.meta.env.VITE_API_ENDPOINT}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Failed to log in");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    if (user) return user;
-
+  const logIn = async (email: string, password: string) => {
     setIsLoading(true);
+    const user = await authQuery("login", { email, password });
+    setUser(user);
+    setIsLoading(false);
 
     return user;
-  }, []);
+  };
 
-  const logOut = useCallback(() => {
+  const register = async (email: string, password: string) => {
     setIsLoading(true);
+    const user = await authQuery("register", { email, password });
+    setUser(user);
+    setIsLoading(false);
 
-    return new Promise<null>((resolve) => {
-      setTimeout(() => {
-        setUser(null);
-        setIsLoading(false);
-        resolve(null);
-      }, 1000);
-    });
-  }, []);
+    return user;
+  };
 
-  const register = useCallback(() => {
-    const user = {
-      id: "123",
-    };
-    setIsLoading(true);
-
-    return new Promise<User>((resolve) => {
-      setTimeout(() => {
-        setUser(user);
-        resolve(user);
-        setIsLoading(false);
-      }, 1000);
-    });
-  }, []);
+  const logOut = () => setUser(null);
 
   const value: AuthProps = {
     user,

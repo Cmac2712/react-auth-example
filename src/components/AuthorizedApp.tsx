@@ -8,7 +8,7 @@ function AuthorizedApp() {
   return (
     <>
       <button onClick={() => logOut()}>Log Out</button>
-      <h1>Welcome {user?.id}</h1>
+      <h1>Welcome {user?.user?.email}</h1>
     </>
   );
 }

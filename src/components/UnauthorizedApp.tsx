@@ -3,12 +3,13 @@ import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
 function UnauthorizedApp() {
-  const { isLoading } = useAuth();
+  const { isLoading, error } = useAuth();
 
   if (isLoading) return <p>loading&hellip;</p>;
 
   return (
     <>
+      {error ? <p>{`${error}. Please try again.`}</p> : null}
       <LoginForm />
       <RegisterForm />
     </>

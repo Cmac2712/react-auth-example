@@ -6,11 +6,11 @@ interface User {
 
 export type AuthProps = {
   user: User | null;
-  logIn: (email: string, password: string) => Promise<User>;
+  logIn: (email: string, password: string) => Promise<User | null>;
   logOut: () => void;
-  register: (email: string, password: string) => Promise<User>;
+  register: (email: string, password: string) => Promise<User | null>;
   isLoading: boolean;
-  isError: boolean;
+  error: string | false;
 } | null;
 
 const AuthContext = createContext<AuthProps>(null);
@@ -51,7 +51,8 @@ interface FetchConfig {
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<string | false>(false);
+
   const getConfig = (data: any): FetchConfig => {
     return {
       method: "POST",
@@ -68,8 +69,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         return resp.ok ? setUser(await resp.json()) : Promise.reject(resp);
       })
       .catch(async (err) => {
-        setIsError(true);
-        return await err.json();
+        setError(await err.json());
       });
     setIsLoading(false);
 
@@ -100,7 +100,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     logOut,
     register,
     isLoading,
-    isError,
+    error,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

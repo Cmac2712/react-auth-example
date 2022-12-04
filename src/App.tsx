@@ -1,11 +1,16 @@
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "./contexts/auth-context";
 import { AuthorizedApp } from "./components/AuthorizedApp";
 import { UnauthorizedApp } from "./components/UnauthorizedApp";
 
 const App = () => {
-  const { user, logIn, logOut, isLoading } = useAuth();
+  const { user, logIn, logOut, isLoading, isError } = useAuth();
+
+  isLoading ? <div>Loading...</div> : null;
+
+  isError ? <div>Error</div> : null;
+
+  console.log("isLoading", isLoading);
 
   return (
     <div>
